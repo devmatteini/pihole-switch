@@ -2,8 +2,10 @@ use std::error::Error as StdError;
 use std::fmt;
 use std::fmt::Formatter;
 
+pub const PIHOLE_TOKEN_ENV: &str = "PIHOLE_TOKEN";
+
 pub fn resolve_api_token(api_token: Option<String>) -> Result<String, TokenResolverError> {
-    let env = std::env::var("PIHOLE_TOKEN");
+    let env = std::env::var(PIHOLE_TOKEN_ENV);
 
     match env {
         Ok(value) => Ok(value),
@@ -85,13 +87,11 @@ mod resolve_api_token_tests {
     }
 
     fn set_api_token_env(api_token: Option<&str>) {
-        let env_key = "PIHOLE_TOKEN";
-
         match api_token {
-            Some(value) => env::set_var(env_key, value),
+            Some(value) => env::set_var(PIHOLE_TOKEN_ENV, value),
             None => {
-                if env::var(env_key).is_ok() {
-                    env::remove_var(env_key);
+                if env::var(PIHOLE_TOKEN_ENV).is_ok() {
+                    env::remove_var(PIHOLE_TOKEN_ENV);
                 }
             }
         }
