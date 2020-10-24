@@ -10,3 +10,5 @@ edition = "2018"
 
 [dev-dependencies]
 serial_test = "0.5.0"
+serde_json = "1.0.59"
+url = "2.1.1"
