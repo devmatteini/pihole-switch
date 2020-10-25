@@ -5,6 +5,8 @@ use std::net::{TcpListener, TcpStream};
 use serde_json;
 use url;
 
+use crate::support::pihole_response::PiHoleResponse;
+
 pub struct PiHoleServer {
     api_key: String,
 }
@@ -37,20 +39,15 @@ fn handle_connection(mut stream: TcpStream, api_key: &String) {
     let query_params = parse_query_params(url);
 
     if method != "GET" {
-        let response = http_response_builder("405 Method Not Allowed", None, None);
+        let response = http_raw_response_builder(PiHoleResponse::method_not_allowed());
         send_response(&mut stream, response);
         return;
     }
 
     let params = query_params_to_map(query_params);
 
-    let (status_line, json_content) = process_request(params, api_key);
-    let content_type = format!("Content-Type: application/json\r\n");
-    let response = http_response_builder(
-        &status_line,
-        Some(content_type),
-        Some(json_content.to_string()),
-    );
+    let response = process_request(params, api_key);
+    let response = http_raw_response_builder(response);
 
     send_response(&mut stream, response);
 }
@@ -85,32 +82,24 @@ fn send_response(stream: &mut TcpStream, response: String) {
     stream.flush().unwrap();
 }
 
-fn http_response_builder(
-    status_line: &str,
-    headers: Option<String>,
-    body: Option<String>,
-) -> String {
-    let headers = match headers {
+fn http_raw_response_builder(response: PiHoleResponse) -> String {
+    let headers = match response.headers {
         Some(value) => value,
         None => "".to_string(),
     };
 
-    let body = match body {
-        Some(value) => value,
+    let body = match response.body {
+        Some(value) => value.to_string(),
         None => "".to_string(),
     };
 
-    format!("HTTP/1.1 {}\r\n{}\r\n{}", status_line, headers, body)
+    format!(
+        "HTTP/1.1 {}\r\n{}\r\n{}",
+        response.status_line, headers, body
+    )
 }
 
-fn bad_request() -> (String, serde_json::Value) {
-    ("200 OK".to_string(), serde_json::json!([]))
-}
-
-fn process_request(
-    params: HashMap<String, String>,
-    api_key: &String,
-) -> (String, serde_json::Value) {
+fn process_request(params: HashMap<String, String>, api_key: &String) -> PiHoleResponse {
     let disable = params.get("disable");
     if disable.is_some() {
         return response(api_key, disable, params.get("auth"), "disabled");
@@ -121,7 +110,7 @@ fn process_request(
         return response(api_key, enable, params.get("auth"), "enabled");
     }
 
-    bad_request()
+    PiHoleResponse::bad_request()
 }
 
 fn response(
@@ -129,15 +118,12 @@ fn response(
     operation: Option<&String>,
     auth: Option<&String>,
     return_status: &str,
-) -> (String, serde_json::Value) {
+) -> PiHoleResponse {
     match (operation, auth) {
         (Some(_), Some(token)) => match token == api_key {
-            true => (
-                String::from("200 OK"),
-                serde_json::json!({ "status": return_status }),
-            ),
-            false => bad_request(),
+            true => PiHoleResponse::ok(serde_json::json!({ "status": return_status })),
+            false => PiHoleResponse::bad_request(),
         },
-        _ => bad_request(),
+        _ => PiHoleResponse::bad_request(),
     }
 }
