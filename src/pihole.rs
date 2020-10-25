@@ -8,21 +8,21 @@ use serde_json::Value as JsonValue;
 pub const PIHOLE_API_URL: &str = "http://pi.hole/admin/api.php";
 
 pub struct PiHoleConfig {
-    pub api_key: String,
+    pub api_token: String,
     pub api_url: String,
 }
 
 impl PiHoleConfig {
-    pub fn new(api_key: String) -> PiHoleConfig {
+    pub fn new(api_token: String) -> PiHoleConfig {
         PiHoleConfig {
-            api_key,
+            api_token,
             api_url: PIHOLE_API_URL.to_string(),
         }
     }
 }
 
 pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
-    let url = format!("{}?enable&auth={}", &config.api_url, &config.api_key);
+    let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
     let response = request(&url)?;
 
     let json = deserialize_response_json(response)?;
@@ -31,7 +31,7 @@ pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
 }
 
 pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
-    let url = format!("{}?disable&auth={}", &config.api_url, &config.api_key);
+    let url = format!("{}?disable&auth={}", &config.api_url, &config.api_token);
     let response = request(&url)?;
 
     let json = deserialize_response_json(response)?;
@@ -89,7 +89,7 @@ impl fmt::Display for PiHoleError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
             PiHoleError::BadRequestOrTokenNotValid => {
-                f.write_str("Bad request or api key not valid")
+                f.write_str("Bad request or api token not valid")
             }
             PiHoleError::Unknown => f.write_str("Unknown error occurred during the request"),
             PiHoleError::InvalidResponse => f.write_str("Pihole returned an invalid response"),

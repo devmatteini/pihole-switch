@@ -10,11 +10,11 @@ mod pihole_tests {
 
     #[test]
     fn successfully_enabled() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "VALID_TOKEN".to_string(),
+            api_token: "VALID_TOKEN".to_string(),
             api_url: url,
         };
 
@@ -25,11 +25,11 @@ mod pihole_tests {
 
     #[test]
     fn enable_with_invalid_token() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "INVALID_TOKEN".to_string(),
+            api_token: "INVALID_TOKEN".to_string(),
             api_url: url,
         };
 
@@ -40,11 +40,11 @@ mod pihole_tests {
 
     #[test]
     fn enable_with_empty_token() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "".to_string(),
+            api_token: "".to_string(),
             api_url: url,
         };
 
@@ -56,7 +56,7 @@ mod pihole_tests {
     #[test]
     fn no_server_found() {
         let config = PiHoleConfig {
-            api_key: "VALID_TOKEN".to_string(),
+            api_token: "VALID_TOKEN".to_string(),
             api_url: "http://localhost:0".to_string(),
         };
 
@@ -67,11 +67,11 @@ mod pihole_tests {
 
     #[test]
     fn successfully_disabled() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "VALID_TOKEN".to_string(),
+            api_token: "VALID_TOKEN".to_string(),
             api_url: url,
         };
 
@@ -82,11 +82,11 @@ mod pihole_tests {
 
     #[test]
     fn disable_with_invalid_token() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "INVALID_TOKEN".to_string(),
+            api_token: "INVALID_TOKEN".to_string(),
             api_url: url,
         };
 
@@ -97,11 +97,11 @@ mod pihole_tests {
 
     #[test]
     fn disable_with_empty_token() {
-        let api_key = "VALID_TOKEN".to_string();
-        let url = PiHoleServer::new(api_key).start().unwrap();
+        let api_token = "VALID_TOKEN".to_string();
+        let url = PiHoleServer::new(api_token).start().unwrap();
 
         let config = PiHoleConfig {
-            api_key: "".to_string(),
+            api_token: "".to_string(),
             api_url: url,
         };
 

@@ -8,23 +8,23 @@ use url;
 use crate::support::pihole_response::PiHoleResponse;
 
 pub struct PiHoleServer {
-    api_key: String,
+    api_token: String,
 }
 
 impl PiHoleServer {
-    pub fn new(api_key: String) -> Self {
-        PiHoleServer { api_key }
+    pub fn new(api_token: String) -> Self {
+        PiHoleServer { api_token }
     }
 
     pub fn start(&self) -> Result<String, Error> {
         let listener = TcpListener::bind("127.0.0.1:0")?;
         let url = format!("http://{}", listener.local_addr()?.to_string());
-        let api_key = self.api_key.clone();
+        let api_token = self.api_token.clone();
 
         std::thread::spawn(move || {
             for stream in listener.incoming() {
                 let stream = stream.unwrap();
-                handle_connection(stream, &api_key);
+                handle_connection(stream, &api_token);
             }
         });
 
@@ -32,7 +32,7 @@ impl PiHoleServer {
     }
 }
 
-fn handle_connection(mut stream: TcpStream, api_key: &String) {
+fn handle_connection(mut stream: TcpStream, api_token: &String) {
     let mut reader = BufReader::new(stream.try_clone().unwrap());
 
     let (method, url) = parse_request_header(&mut reader);
@@ -46,7 +46,7 @@ fn handle_connection(mut stream: TcpStream, api_key: &String) {
 
     let params = query_params_to_map(query_params);
 
-    let response = process_request(params, api_key);
+    let response = process_request(params, api_token);
     let response = http_raw_response_builder(response);
 
     send_response(&mut stream, response);
@@ -99,28 +99,28 @@ fn http_raw_response_builder(response: PiHoleResponse) -> String {
     )
 }
 
-fn process_request(params: HashMap<String, String>, api_key: &String) -> PiHoleResponse {
+fn process_request(params: HashMap<String, String>, api_token: &String) -> PiHoleResponse {
     let disable = params.get("disable");
     if disable.is_some() {
-        return response(api_key, disable, params.get("auth"), "disabled");
+        return response(api_token, disable, params.get("auth"), "disabled");
     }
 
     let enable = params.get("enable");
     if enable.is_some() {
-        return response(api_key, enable, params.get("auth"), "enabled");
+        return response(api_token, enable, params.get("auth"), "enabled");
     }
 
     PiHoleResponse::bad_request()
 }
 
 fn response(
-    api_key: &String,
+    api_token: &String,
     operation: Option<&String>,
     auth: Option<&String>,
     return_status: &str,
 ) -> PiHoleResponse {
     match (operation, auth) {
-        (Some(_), Some(token)) => match token == api_key {
+        (Some(_), Some(token)) => match token == api_token {
             true => PiHoleResponse::ok(serde_json::json!({ "status": return_status })),
             false => PiHoleResponse::bad_request(),
         },
