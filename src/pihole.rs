@@ -2,6 +2,7 @@ use std::error::Error as StdError;
 use std::fmt;
 use std::fmt::Formatter;
 
+use reqwest::blocking::Response;
 use serde_json::Value as JsonValue;
 
 pub const PIHOLE_API_URL: &str = "http://pi.hole/admin/api.php";
@@ -13,33 +14,40 @@ pub struct PiHoleConfig {
 
 pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_key);
-    let response = reqwest::blocking::get(&url).map_err(|_| PiHoleError::Unknown)?;
+    let response = request(&url)?;
 
-    let json = response
-        .json::<JsonValue>()
-        .map_err(|_| PiHoleError::InvalidResponse)?;
+    let json = deserialize_response_json(response)?;
 
-    match json {
-        JsonValue::Object(obj) => match obj.get(&"status".to_string()) {
-            Some(value) => validate_status(value),
-            None => Err(PiHoleError::InvalidResponse),
-        },
-        JsonValue::Array(_) => Err(PiHoleError::BadRequestOrTokenNotValid),
-        _ => Err(PiHoleError::InvalidResponse),
-    }
+    process_response(json, "enabled", PiHoleError::NotEnabled)
 }
 
 pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?disable&auth={}", &config.api_url, &config.api_key);
-    let response = reqwest::blocking::get(&url).map_err(|_| PiHoleError::Unknown)?;
+    let response = request(&url)?;
 
-    let json = response
+    let json = deserialize_response_json(response)?;
+
+    process_response(json, "disabled", PiHoleError::NotDisabled)
+}
+
+fn request(url: &String) -> Result<Response, PiHoleError> {
+    reqwest::blocking::get(url).map_err(|_| PiHoleError::Unknown)
+}
+
+fn deserialize_response_json(response: Response) -> Result<JsonValue, PiHoleError> {
+    response
         .json::<JsonValue>()
-        .map_err(|_| PiHoleError::InvalidResponse)?;
+        .map_err(|_| PiHoleError::InvalidResponse)
+}
 
+fn process_response(
+    json: JsonValue,
+    expected_status: &str,
+    status_error: PiHoleError,
+) -> Result<(), PiHoleError> {
     match json {
         JsonValue::Object(obj) => match obj.get(&"status".to_string()) {
-            Some(value) => validate_status_disabled(value),
+            Some(actual) => validate_status(expected_status, actual, status_error),
             None => Err(PiHoleError::InvalidResponse),
         },
         JsonValue::Array(_) => Err(PiHoleError::BadRequestOrTokenNotValid),
@@ -47,19 +55,15 @@ pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     }
 }
 
-fn validate_status_disabled(value: &JsonValue) -> Result<(), PiHoleError> {
-    if value == &JsonValue::from("disabled") {
+fn validate_status(
+    expected: &str,
+    actual: &JsonValue,
+    error: PiHoleError,
+) -> Result<(), PiHoleError> {
+    if actual == &JsonValue::from(expected) {
         Ok(())
     } else {
-        Err(PiHoleError::NotDisabled)
-    }
-}
-
-fn validate_status(value: &JsonValue) -> Result<(), PiHoleError> {
-    if value == &JsonValue::from("enabled") {
-        Ok(())
-    } else {
-        Err(PiHoleError::NotEnabled)
+        Err(error)
     }
 }
 
