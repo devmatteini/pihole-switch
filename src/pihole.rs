@@ -12,6 +12,15 @@ pub struct PiHoleConfig {
     pub api_url: String,
 }
 
+impl PiHoleConfig {
+    pub fn new(api_key: String) -> PiHoleConfig {
+        PiHoleConfig {
+            api_key,
+            api_url: PIHOLE_API_URL.to_string(),
+        }
+    }
+}
+
 pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_key);
     let response = request(&url)?;
@@ -79,23 +88,15 @@ pub enum PiHoleError {
 impl fmt::Display for PiHoleError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            PiHoleError::BadRequestOrTokenNotValid => f.write_str("BadRequestOrTokenNotValid"),
-            PiHoleError::Unknown => f.write_str("Unknown"),
-            PiHoleError::InvalidResponse => f.write_str("InvalidResponse"),
-            PiHoleError::NotEnabled => f.write_str("NotEnabled"),
-            PiHoleError::NotDisabled => f.write_str("NotDisabled"),
+            PiHoleError::BadRequestOrTokenNotValid => {
+                f.write_str("Bad request or api key not valid")
+            }
+            PiHoleError::Unknown => f.write_str("Unknown error occurred during the request"),
+            PiHoleError::InvalidResponse => f.write_str("Pihole returned an invalid response"),
+            PiHoleError::NotEnabled => f.write_str("Cannot enable pihole"),
+            PiHoleError::NotDisabled => f.write_str("Cannot disable pihole"),
         }
     }
 }
 
-impl StdError for PiHoleError {
-    fn description(&self) -> &str {
-        match *self {
-            PiHoleError::BadRequestOrTokenNotValid => "No api token was provided",
-            PiHoleError::Unknown => "Unknown error occurred during the request",
-            PiHoleError::InvalidResponse => "Pihole returned an invalid response",
-            PiHoleError::NotEnabled => "Cannot enable pihole",
-            PiHoleError::NotDisabled => "Cannot disable pihole",
-        }
-    }
-}
+impl StdError for PiHoleError {}

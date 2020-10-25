@@ -24,18 +24,12 @@ pub enum TokenResolverError {
 impl fmt::Display for TokenResolverError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            TokenResolverError::NoToken => f.write_str("NoToken"),
+            TokenResolverError::NoToken => f.write_str("No api token was provided"),
         }
     }
 }
 
-impl StdError for TokenResolverError {
-    fn description(&self) -> &str {
-        match *self {
-            TokenResolverError::NoToken => "No api token was provided",
-        }
-    }
-}
+impl StdError for TokenResolverError {}
 
 #[cfg(test)]
 mod resolve_api_token_tests {
