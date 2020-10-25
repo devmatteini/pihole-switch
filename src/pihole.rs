@@ -15,17 +15,17 @@ pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_key);
     let response = reqwest::blocking::get(&url).map_err(|_| PiHoleError::Unknown)?;
 
-    let json = response.json::<JsonValue>().map_err(|_| PiHoleError::InvalidResponse)?;
+    let json = response
+        .json::<JsonValue>()
+        .map_err(|_| PiHoleError::InvalidResponse)?;
 
     match json {
-        JsonValue::Object(obj) => {
-            match obj.get(&"status".to_string()) {
-                Some(value) => validate_status(value),
-                None => Err(PiHoleError::InvalidResponse)
-            }
-        }
+        JsonValue::Object(obj) => match obj.get(&"status".to_string()) {
+            Some(value) => validate_status(value),
+            None => Err(PiHoleError::InvalidResponse),
+        },
         JsonValue::Array(_) => Err(PiHoleError::BadRequestOrTokenNotValid),
-        _ => Err(PiHoleError::InvalidResponse)
+        _ => Err(PiHoleError::InvalidResponse),
     }
 }
 

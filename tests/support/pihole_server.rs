@@ -46,7 +46,11 @@ fn handle_connection(mut stream: TcpStream, api_key: &String) {
 
     let (status_line, json_content) = process_request(params, api_key);
     let content_type = format!("Content-Type: application/json\r\n");
-    let response = http_response_builder(status_line, Some(content_type), Some(json_content.to_string()));
+    let response = http_response_builder(
+        status_line,
+        Some(content_type),
+        Some(json_content.to_string()),
+    );
 
     send_response(&mut stream, response);
 }
@@ -58,7 +62,7 @@ fn query_params_to_map(query_params: Option<String>) -> HashMap<String, String> 
             let params_map: HashMap<String, String> = parsed.into_owned().collect();
             params_map
         }
-        None => HashMap::new()
+        None => HashMap::new(),
     }
 }
 
@@ -81,15 +85,19 @@ fn send_response(stream: &mut TcpStream, response: String) {
     stream.flush().unwrap();
 }
 
-fn http_response_builder(status_line: &str, headers: Option<String>, body: Option<String>) -> String {
+fn http_response_builder(
+    status_line: &str,
+    headers: Option<String>,
+    body: Option<String>,
+) -> String {
     let headers = match headers {
         Some(value) => value,
-        None => "".to_string()
+        None => "".to_string(),
     };
 
     let body = match body {
         Some(value) => value,
-        None => "".to_string()
+        None => "".to_string(),
     };
 
     format!("HTTP/1.1 {}\r\n{}\r\n{}", status_line, headers, body)
