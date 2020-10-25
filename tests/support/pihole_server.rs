@@ -98,11 +98,27 @@ fn http_response_builder(status_line: &str, headers: Option<String>, body: Optio
 fn process_request(params: HashMap<String, String>, api_key: &String) -> (&str, serde_json::Value) {
     let bad_request = ("200 OK", serde_json::json!([]));
 
-    match (params.get("enable"), params.get("auth")) {
-        (Some(_), Some(token)) => match token == api_key {
-            true => ("200 OK", serde_json::json!({"status": "enabled"})),
-            false => bad_request,
-        },
-        _ => bad_request,
+    let disable = params.get("disable");
+    if disable.is_some() {
+        return match (disable, params.get("auth")) {
+            (Some(_), Some(token)) => match token == api_key {
+                true => ("200 OK", serde_json::json!({"status":"disabled"})),
+                false => bad_request,
+            },
+            _ => bad_request,
+        };
     }
+
+    let enable = params.get("enable");
+    if enable.is_some() {
+        return match (enable, params.get("auth")) {
+            (Some(_), Some(token)) => match token == api_key {
+                true => ("200 OK", serde_json::json!({"status":"enabled"})),
+                false => bad_request,
+            },
+            _ => bad_request,
+        };
+    }
+
+    bad_request
 }
