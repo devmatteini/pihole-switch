@@ -47,7 +47,7 @@ fn handle_connection(mut stream: TcpStream, api_key: &String) {
     let (status_line, json_content) = process_request(params, api_key);
     let content_type = format!("Content-Type: application/json\r\n");
     let response = http_response_builder(
-        status_line,
+        &status_line,
         Some(content_type),
         Some(json_content.to_string()),
     );
@@ -103,30 +103,41 @@ fn http_response_builder(
     format!("HTTP/1.1 {}\r\n{}\r\n{}", status_line, headers, body)
 }
 
-fn process_request(params: HashMap<String, String>, api_key: &String) -> (&str, serde_json::Value) {
-    let bad_request = ("200 OK", serde_json::json!([]));
+fn bad_request() -> (String, serde_json::Value) {
+    ("200 OK".to_string(), serde_json::json!([]))
+}
 
+fn process_request(
+    params: HashMap<String, String>,
+    api_key: &String,
+) -> (String, serde_json::Value) {
     let disable = params.get("disable");
     if disable.is_some() {
-        return match (disable, params.get("auth")) {
-            (Some(_), Some(token)) => match token == api_key {
-                true => ("200 OK", serde_json::json!({"status":"disabled"})),
-                false => bad_request,
-            },
-            _ => bad_request,
-        };
+        return response(api_key, disable, params.get("auth"), "disabled");
     }
 
     let enable = params.get("enable");
     if enable.is_some() {
-        return match (enable, params.get("auth")) {
-            (Some(_), Some(token)) => match token == api_key {
-                true => ("200 OK", serde_json::json!({"status":"enabled"})),
-                false => bad_request,
-            },
-            _ => bad_request,
-        };
+        return response(api_key, enable, params.get("auth"), "enabled");
     }
 
-    bad_request
+    bad_request()
+}
+
+fn response(
+    api_key: &String,
+    operation: Option<&String>,
+    auth: Option<&String>,
+    return_status: &str,
+) -> (String, serde_json::Value) {
+    match (operation, auth) {
+        (Some(_), Some(token)) => match token == api_key {
+            true => (
+                String::from("200 OK"),
+                serde_json::json!({ "status": return_status }),
+            ),
+            false => bad_request(),
+        },
+        _ => bad_request(),
+    }
 }
