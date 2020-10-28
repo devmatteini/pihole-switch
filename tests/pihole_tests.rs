@@ -62,7 +62,7 @@ mod pihole_tests {
 
         let response = pihole::enable(&config);
 
-        assert_eq!(response.err(), Some(PiHoleError::Unknown));
+        assert_eq!(response.err(), Some(PiHoleError::HttpError));
     }
 
     #[test]

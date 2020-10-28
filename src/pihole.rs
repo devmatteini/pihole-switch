@@ -39,8 +39,8 @@ pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     process_response(json, "disabled", PiHoleError::NotDisabled)
 }
 
-fn request(url: &String) -> Result<Response, PiHoleError> {
-    reqwest::blocking::get(url).map_err(|_| PiHoleError::Unknown)
+fn request(url: &str) -> Result<Response, PiHoleError> {
+    reqwest::blocking::get(url).map_err(|_| PiHoleError::HttpError)
 }
 
 fn deserialize_response_json(response: Response) -> Result<JsonValue, PiHoleError> {
@@ -79,7 +79,7 @@ fn validate_status(
 #[derive(Debug, PartialEq)]
 pub enum PiHoleError {
     BadRequestOrTokenNotValid,
-    Unknown,
+    HttpError,
     InvalidResponse,
     NotEnabled,
     NotDisabled,
@@ -91,7 +91,7 @@ impl fmt::Display for PiHoleError {
             PiHoleError::BadRequestOrTokenNotValid => {
                 f.write_str("Bad request or api token not valid")
             }
-            PiHoleError::Unknown => f.write_str("Unknown error occurred during the request"),
+            PiHoleError::HttpError => f.write_str("Unknown error occurred during the request"),
             PiHoleError::InvalidResponse => f.write_str("Pihole returned an invalid response"),
             PiHoleError::NotEnabled => f.write_str("Cannot enable pihole"),
             PiHoleError::NotDisabled => f.write_str("Cannot disable pihole"),
