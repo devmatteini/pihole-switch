@@ -18,7 +18,7 @@ impl PiHoleResponse {
     fn from_json(status_line: String, json: JsonValue) -> PiHoleResponse {
         PiHoleResponse {
             status_line,
-            headers: Some(format!("Content-Type: application/json\r\n")),
+            headers: Some("Content-Type: application/json\r\n".to_string()),
             body: Some(json),
         }
     }

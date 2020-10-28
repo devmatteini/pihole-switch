@@ -2,9 +2,6 @@ use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Error, Write};
 use std::net::{TcpListener, TcpStream};
 
-use serde_json;
-use url;
-
 use crate::support::pihole_response::PiHoleResponse;
 
 pub struct PiHoleServer {
@@ -32,7 +29,7 @@ impl PiHoleServer {
     }
 }
 
-fn handle_connection(mut stream: TcpStream, api_token: &String) {
+fn handle_connection(mut stream: TcpStream, api_token: &str) {
     let mut reader = BufReader::new(stream.try_clone().unwrap());
 
     let (method, url) = parse_request_header(&mut reader);
@@ -73,12 +70,12 @@ fn parse_request_header(reader: &mut dyn BufRead) -> (String, String) {
 }
 
 fn parse_query_params(url: String) -> Option<String> {
-    let query_params: Vec<&str> = url.split("?").collect();
+    let query_params: Vec<&str> = url.split('?').collect();
     query_params.get(1).map(|x| x.to_string())
 }
 
 fn send_response(stream: &mut TcpStream, response: String) {
-    stream.write(response.as_bytes()).unwrap();
+    stream.write_all(response.as_bytes()).unwrap();
     stream.flush().unwrap();
 }
 
@@ -99,7 +96,7 @@ fn http_raw_response_builder(response: PiHoleResponse) -> String {
     )
 }
 
-fn process_request(params: HashMap<String, String>, api_token: &String) -> PiHoleResponse {
+fn process_request(params: HashMap<String, String>, api_token: &str) -> PiHoleResponse {
     let disable = params.get("disable");
     if disable.is_some() {
         return response(api_token, disable, params.get("auth"), "disabled");
@@ -114,7 +111,7 @@ fn process_request(params: HashMap<String, String>, api_token: &String) -> PiHol
 }
 
 fn response(
-    api_token: &String,
+    api_token: &str,
     operation: Option<&String>,
     auth: Option<&String>,
     return_status: &str,
