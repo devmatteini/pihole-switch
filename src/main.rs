@@ -19,7 +19,8 @@ fn main() {
 fn handle_enable(token: Option<String>) {
     match resolve_api_token(token) {
         Ok(token) => {
-            let config = PiHoleConfig::new(token);
+            let api_url = PiHoleConfig::build_url(pihole::PIHOLE_DEFAULT_HOST);
+            let config = PiHoleConfig::new(token, api_url);
 
             let res = pihole::enable(&config);
 
@@ -38,7 +39,8 @@ fn handle_enable(token: Option<String>) {
 fn handle_disable(token: Option<String>) {
     match resolve_api_token(token) {
         Ok(token) => {
-            let config = PiHoleConfig::new(token);
+            let api_url = PiHoleConfig::build_url(pihole::PIHOLE_DEFAULT_HOST);
+            let config = PiHoleConfig::new(token, api_url);
 
             let res = pihole::disable(&config);
 
