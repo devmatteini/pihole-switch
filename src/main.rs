@@ -29,7 +29,7 @@ fn handle_enable(token: Option<String>) {
             }
         }
         Err(err) => print_error(&format!(
-            "{}\nUse `pihole-switch enable [token]` or set PIHOLE_TOKEN environment variable",
+            "{}\nUse `phs enable [token]` or set PIHOLE_TOKEN environment variable",
             err
         )),
     }
@@ -48,7 +48,7 @@ fn handle_disable(token: Option<String>) {
             }
         }
         Err(err) => print_error(&format!(
-            "{}\nUse `pihole-switch disable [token]` or set PIHOLE_TOKEN environment variable",
+            "{}\nUse `phs disable [token]` or set PIHOLE_TOKEN environment variable",
             err
         )),
     }
