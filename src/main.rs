@@ -5,22 +5,25 @@ use pihole_switch::pihole::PiHoleConfig;
 use pihole_switch::resolve_api_token::resolve_api_token;
 
 use crate::cli::io::{print_error, print_pihole_error, print_success};
-use crate::cli::root_command::Cli;
+use crate::cli::root_command::{Cli, Commands};
 
 mod cli;
 
 fn main() {
-    match Cli::from_args() {
-        Cli::Enable { token } => handle_enable(token),
-        Cli::Disable { token } => handle_disable(token),
+    let args: Cli = Cli::from_args();
+
+    let host = args.host;
+
+    match args.cmd {
+        Commands::Enable { token } => handle_enable(token, host),
+        Commands::Disable { token } => handle_disable(token, host),
     }
 }
 
-fn handle_enable(token: Option<String>) {
+fn handle_enable(token: Option<String>, host: Option<String>) {
     match resolve_api_token(token) {
         Ok(token) => {
-            let api_url = PiHoleConfig::build_url(pihole::PIHOLE_DEFAULT_HOST);
-            let config = PiHoleConfig::new(token, api_url);
+            let config = build_pihole_config(token, host);
 
             let res = pihole::enable(&config);
 
@@ -36,11 +39,10 @@ fn handle_enable(token: Option<String>) {
     }
 }
 
-fn handle_disable(token: Option<String>) {
+fn handle_disable(token: Option<String>, host: Option<String>) {
     match resolve_api_token(token) {
         Ok(token) => {
-            let api_url = PiHoleConfig::build_url(pihole::PIHOLE_DEFAULT_HOST);
-            let config = PiHoleConfig::new(token, api_url);
+            let config = build_pihole_config(token, host);
 
             let res = pihole::disable(&config);
 
@@ -54,4 +56,11 @@ fn handle_disable(token: Option<String>) {
             err
         )),
     }
+}
+
+fn build_pihole_config(token: String, host: Option<String>) -> PiHoleConfig {
+    let host = host.unwrap_or_else(|| pihole::PIHOLE_DEFAULT_HOST.to_string());
+    let api_url = PiHoleConfig::build_url(&host);
+
+    PiHoleConfig::new(token, api_url)
 }

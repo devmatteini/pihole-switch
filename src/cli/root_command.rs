@@ -6,7 +6,20 @@ use structopt::StructOpt;
     about = "A command line tool to enable/disable your PiHole",
     no_version
 )]
-pub enum Cli {
+pub struct Cli {
+    /// Override default pihole host
+    ///
+    /// You can pass an IPv4/hostname to override the default host (`pi.hole`) in order to make
+    /// pihole-switch work if it's not set as the device dns server.
+    #[structopt(short = "H", long = "host")]
+    pub host: Option<String>,
+
+    #[structopt(subcommand)]
+    pub cmd: Commands,
+}
+
+#[derive(Debug, StructOpt)]
+pub enum Commands {
     /// Enable your PiHole
     ///
     /// The api token is required.
