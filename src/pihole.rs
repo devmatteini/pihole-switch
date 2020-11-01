@@ -2,8 +2,8 @@ use std::error::Error as StdError;
 use std::fmt;
 use std::fmt::Formatter;
 
-use reqwest::blocking::Response;
 use serde_json::Value as JsonValue;
+use ureq::Response;
 
 pub const PIHOLE_DEFAULT_HOST: &str = "pi.hole";
 
@@ -41,12 +41,18 @@ pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
 }
 
 fn request(url: &str) -> Result<Response, PiHoleError> {
-    reqwest::blocking::get(url).map_err(|_| PiHoleError::HttpError)
+    let response = ureq::get(url).call();
+
+    if response.synthetic_error().is_some() {
+        return Err(PiHoleError::HttpError);
+    }
+
+    Ok(response)
 }
 
 fn deserialize_response_json(response: Response) -> Result<JsonValue, PiHoleError> {
     response
-        .json::<JsonValue>()
+        .into_json()
         .map_err(|_| PiHoleError::InvalidResponse)
 }
 
