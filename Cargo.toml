@@ -14,6 +14,7 @@ path = "src/main.rs"
 reqwest = { version = "0.10", features = ["blocking", "json"] }
 serde_json = "1.0.59"
 structopt = "0.3.20"
+ansi_term = "0.12.1"
 
 [dev-dependencies]
 serial_test = "0.5.0"
