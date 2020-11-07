@@ -9,18 +9,25 @@ use crate::cli::root_command::{Cli, Commands};
 
 mod cli;
 
+enum ExitCode {
+    Ok = 0,
+    Error = 1,
+}
+
 fn main() {
     let args: Cli = Cli::from_args();
 
     let host = args.host;
 
-    match args.cmd {
+    let exit_code = match args.cmd {
         Commands::Enable { token } => handle_enable(token, host),
         Commands::Disable { token } => handle_disable(token, host),
-    }
+    };
+
+    std::process::exit(exit_code as i32);
 }
 
-fn handle_enable(token: Option<String>, host: Option<String>) {
+fn handle_enable(token: Option<String>, host: Option<String>) -> ExitCode {
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
@@ -29,17 +36,26 @@ fn handle_enable(token: Option<String>, host: Option<String>) {
 
             match res {
                 Ok(_) => print_success("PiHole enabled successfully!"),
-                Err(err) => print_pihole_error(err),
+                Err(err) => {
+                    print_pihole_error(err);
+                    return ExitCode::Error;
+                }
             }
         }
-        Err(err) => print_error(&format!(
-            "{}\nUse `phs enable [token]` or set PIHOLE_TOKEN environment variable",
-            err
-        )),
+        Err(err) => {
+            print_error(&format!(
+                "{}\nUse `phs enable [token]` or set PIHOLE_TOKEN environment variable",
+                err
+            ));
+
+            return ExitCode::Error;
+        }
     }
+
+    ExitCode::Ok
 }
 
-fn handle_disable(token: Option<String>, host: Option<String>) {
+fn handle_disable(token: Option<String>, host: Option<String>) -> ExitCode {
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
@@ -48,14 +64,23 @@ fn handle_disable(token: Option<String>, host: Option<String>) {
 
             match res {
                 Ok(_) => print_success("PiHole disabled successfully!"),
-                Err(err) => print_pihole_error(err),
+                Err(err) => {
+                    print_pihole_error(err);
+                    return ExitCode::Error;
+                }
             }
         }
-        Err(err) => print_error(&format!(
-            "{}\nUse `phs disable [token]` or set PIHOLE_TOKEN environment variable",
-            err
-        )),
+        Err(err) => {
+            print_error(&format!(
+                "{}\nUse `phs disable [token]` or set PIHOLE_TOKEN environment variable",
+                err
+            ));
+
+            return ExitCode::Error;
+        }
     }
+
+    ExitCode::Ok
 }
 
 fn build_pihole_config(token: String, host: Option<String>) -> PiHoleConfig {

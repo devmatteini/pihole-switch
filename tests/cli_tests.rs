@@ -37,7 +37,7 @@ mod cli_tests {
         let assert = cmd.env_clear().arg("enable").assert();
 
         assert
-            .success()
+            .failure()
             .stderr(predicates::str::contains("No api token was provided"));
     }
 
