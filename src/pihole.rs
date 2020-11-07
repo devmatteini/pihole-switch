@@ -41,7 +41,7 @@ pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
 }
 
 fn request(url: &str) -> Result<Response, PiHoleError> {
-    let response = ureq::get(url).call();
+    let response = ureq::get(url).timeout_connect(7_000).call();
 
     if let Some(err) = response.synthetic_error() {
         return Err(PiHoleError::HttpError(err.body_text()));
