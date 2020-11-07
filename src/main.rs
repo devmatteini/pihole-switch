@@ -5,7 +5,7 @@ use pihole_switch::pihole::PiHoleConfig;
 use pihole_switch::resolve_api_token::resolve_api_token;
 
 use crate::cli::io::{print_error, print_pihole_error, print_success};
-use crate::cli::root_command::{Cli, Commands};
+use crate::cli::root_command::{Cli, Command};
 
 mod cli;
 
@@ -20,8 +20,8 @@ fn main() {
     let host = args.host;
 
     let exit_code = match args.cmd {
-        Commands::Enable { token } => handle_enable(token, host),
-        Commands::Disable { token } => handle_disable(token, host),
+        Command::Enable { token } => handle_enable(token, host),
+        Command::Disable { token } => handle_disable(token, host),
     };
 
     std::process::exit(exit_code as i32);

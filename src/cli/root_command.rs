@@ -15,11 +15,11 @@ pub struct Cli {
     pub host: Option<String>,
 
     #[structopt(subcommand)]
-    pub cmd: Commands,
+    pub cmd: Command,
 }
 
 #[derive(Debug, StructOpt)]
-pub enum Commands {
+pub enum Command {
     /// Enable your PiHole
     ///
     /// The api token is required.
