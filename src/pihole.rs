@@ -43,8 +43,8 @@ pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
 fn request(url: &str) -> Result<Response, PiHoleError> {
     let response = ureq::get(url).call();
 
-    if response.synthetic_error().is_some() {
-        return Err(PiHoleError::HttpError);
+    if let Some(err) = response.synthetic_error() {
+        return Err(PiHoleError::HttpError(err.body_text()));
     }
 
     Ok(response)
@@ -86,7 +86,7 @@ fn validate_status(
 #[derive(Debug, PartialEq)]
 pub enum PiHoleError {
     BadRequestOrTokenNotValid,
-    HttpError,
+    HttpError(String),
     InvalidResponse,
     NotEnabled,
     NotDisabled,
@@ -94,11 +94,14 @@ pub enum PiHoleError {
 
 impl fmt::Display for PiHoleError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match *self {
+        match self {
             PiHoleError::BadRequestOrTokenNotValid => {
                 f.write_str("Bad request or api token not valid")
             }
-            PiHoleError::HttpError => f.write_str("Unknown error occurred during the request"),
+            PiHoleError::HttpError(inner) => f.write_str(&format!(
+                "An error occurred during the request:\n  {}",
+                inner
+            )),
             PiHoleError::InvalidResponse => f.write_str("Pihole returned an invalid response"),
             PiHoleError::NotEnabled => f.write_str("Cannot enable pihole"),
             PiHoleError::NotDisabled => f.write_str("Cannot disable pihole"),

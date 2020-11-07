@@ -29,7 +29,7 @@ fn eprint_bold(color: Color, message: &str) {
 pub fn print_pihole_error(error: PiHoleError) {
     match error {
         PiHoleError::BadRequestOrTokenNotValid => print_error(&error.to_string()),
-        PiHoleError::HttpError => print_unknown(&error.to_string()),
+        PiHoleError::HttpError(_) => print_unknown(&error.to_string()),
         PiHoleError::InvalidResponse => print_unknown(&error.to_string()),
         PiHoleError::NotEnabled => print_warning(&error.to_string()),
         PiHoleError::NotDisabled => print_warning(&error.to_string()),

@@ -62,7 +62,12 @@ mod pihole_tests {
 
         let response = pihole::enable(&config);
 
-        assert_eq!(response.err(), Some(PiHoleError::HttpError));
+        assert_eq!(
+            response.err(),
+            Some(PiHoleError::HttpError(
+                "Connection Failed: Connection refused (os error 111)".to_string()
+            ))
+        );
     }
 
     #[test]
