@@ -6,6 +6,7 @@ use pihole_switch::resolve_api_token::resolve_api_token;
 
 use crate::cli::io::{print_error, print_pihole_error, print_success};
 use crate::cli::root_command::{Cli, Command};
+use std::time::Duration;
 
 mod cli;
 
@@ -21,7 +22,7 @@ fn main() {
 
     let exit_code = match args.cmd {
         Command::Enable { token } => handle_enable(token, host),
-        Command::Disable { token } => handle_disable(token, host),
+        Command::Disable { token, time } => handle_disable(token, host, time),
     };
 
     std::process::exit(exit_code as i32);
@@ -55,12 +56,12 @@ fn handle_enable(token: Option<String>, host: Option<String>) -> ExitCode {
     ExitCode::Ok
 }
 
-fn handle_disable(token: Option<String>, host: Option<String>) -> ExitCode {
+fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>) -> ExitCode {
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
-
-            let res = pihole::disable(&config, None);
+            let disable_time = time.map(Duration::from_secs);
+            let res = pihole::disable(&config, disable_time);
 
             match res {
                 Ok(_) => print_success("PiHole disabled successfully!"),

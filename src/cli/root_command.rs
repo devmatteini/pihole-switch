@@ -43,5 +43,11 @@ pub enum Command {
     Disable {
         #[structopt(help = "PiHole api token to make authorized requests")]
         token: Option<String>,
+
+        /// Disable pihole for custom seconds
+        ///
+        /// Default is indefinitely.
+        #[structopt(short = "t", long = "time")]
+        time: Option<u64>,
     },
 }
