@@ -2,3 +2,6 @@
 
 .idea/
 .vscode/
+
+# direnv file
+.envrc
