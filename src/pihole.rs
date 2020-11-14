@@ -3,6 +3,7 @@ use std::fmt;
 use std::fmt::Formatter;
 
 use serde_json::Value as JsonValue;
+use std::time::Duration;
 use ureq::Response;
 
 pub const PIHOLE_DEFAULT_HOST: &str = "pi.hole";
@@ -31,8 +32,12 @@ pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     process_response(json, "enabled", PiHoleError::NotEnabled)
 }
 
-pub fn disable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
-    let url = format!("{}?disable&auth={}", &config.api_url, &config.api_token);
+pub fn disable(config: &PiHoleConfig, time: Option<Duration>) -> Result<(), PiHoleError> {
+    let disable_time = time.unwrap_or_else(|| Duration::from_secs(0)).as_secs();
+    let url = format!(
+        "{}?disable={}&auth={}",
+        &config.api_url, disable_time, &config.api_token
+    );
     let response = request(&url)?;
 
     let json = deserialize_response_json(response)?;

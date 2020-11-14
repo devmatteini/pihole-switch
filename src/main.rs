@@ -60,7 +60,7 @@ fn handle_disable(token: Option<String>, host: Option<String>) -> ExitCode {
         Ok(token) => {
             let config = build_pihole_config(token, host);
 
-            let res = pihole::disable(&config);
+            let res = pihole::disable(&config, None);
 
             match res {
                 Ok(_) => print_success("PiHole disabled successfully!"),
