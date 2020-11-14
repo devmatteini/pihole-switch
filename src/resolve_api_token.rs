@@ -32,7 +32,7 @@ impl fmt::Display for TokenResolverError {
 impl StdError for TokenResolverError {}
 
 #[cfg(test)]
-mod resolve_api_token_tests {
+mod tests {
     use std::env;
 
     use serial_test::serial;
