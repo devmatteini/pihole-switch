@@ -3,8 +3,7 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 #[structopt(
     name = "pihole-switch",
-    about = "A command line tool to enable/disable your PiHole",
-    no_version
+    about = "A command line tool to enable/disable your PiHole"
 )]
 pub struct Cli {
     /// Override default pihole host

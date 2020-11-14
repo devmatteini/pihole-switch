@@ -45,7 +45,7 @@ fn handle_enable(token: Option<String>, host: Option<String>) -> ExitCode {
         }
         Err(err) => {
             print_error(&format!(
-                "{}\nUse `phs enable [token]` or set PIHOLE_TOKEN environment variable",
+                "{}\n  Use `phs enable [token]` or set PIHOLE_TOKEN environment variable",
                 err
             ));
 
@@ -73,7 +73,7 @@ fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>
         }
         Err(err) => {
             print_error(&format!(
-                "{}\nUse `phs disable [token]` or set PIHOLE_TOKEN environment variable",
+                "{}\n  Use `phs disable [token]` or set PIHOLE_TOKEN environment variable",
                 err
             ));
 
