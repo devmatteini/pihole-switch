@@ -1,9 +1,14 @@
+use std::net::{AddrParseError, Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
 use structopt::StructOpt;
 
-fn try_parse_host(src: &str) -> Result<String, std::net::AddrParseError> {
-    std::net::Ipv4Addr::from_str(src).map(|x| x.to_string())
+fn try_parse_host(src: &str) -> Result<String, AddrParseError> {
+    if src.contains(':') {
+        return SocketAddrV4::from_str(src).map(|x| x.to_string());
+    }
+
+    Ipv4Addr::from_str(src).map(|x| x.to_string())
 }
 
 #[derive(Debug, StructOpt)]
