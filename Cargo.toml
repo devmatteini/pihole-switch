@@ -3,8 +3,14 @@ name = "pihole-switch"
 version = "0.1.0"
 authors = ["devmatteini <dev.matteini@gmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A command line tool to enable/disable your pihole"
+documentation = "https://github.com/devmatteini/pihole-switch"
+readme = "README.md"
+homepage = "https://github.com/devmatteini/pihole-switch"
+repository = "https://github.com/devmatteini/pihole-switch"
+license = "MIT"
+categories = ["command-line-utilities"]
+keywords = ["pihole", "cli"]
 
 [[bin]]
 name = "phs"
