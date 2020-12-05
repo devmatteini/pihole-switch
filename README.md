@@ -3,6 +3,8 @@
 
 A command line tool to enable/disable your [pihole](https://pi-hole.net/)
 
+![](./assets/phs_demo.gif)
+
 ## Installation
 
 From source:
