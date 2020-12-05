@@ -19,7 +19,14 @@ Just open a terminal, and you can disable pihole in a moment and for as long as 
 
 ## Installation
 
-From source:
+#### Recommended
+
+Download the [latest release](https://github.com/devmatteini/pihole-switch/releases/latest)
+and unzip the `phs.zip` file.
+
+After the archive is unzipped, move the `phs` binary in a folder included in your `$PATH` (it's commonly used `/usr/local/bin`).
+
+#### From source
 
 ```bash
 git clone https://github.com/devmatteini/pihole-switch && cd pihole-switch
