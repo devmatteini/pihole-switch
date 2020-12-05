@@ -1,4 +1,10 @@
+use std::str::FromStr;
+
 use structopt::StructOpt;
+
+fn try_parse_host(src: &str) -> Result<String, std::net::AddrParseError> {
+    std::net::Ipv4Addr::from_str(src).map(|x| x.to_string())
+}
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -8,9 +14,9 @@ use structopt::StructOpt;
 pub struct Cli {
     /// Override default pihole host
     ///
-    /// You can pass an IPv4/hostname to override the default host (`pi.hole`) in order to make
+    /// You can pass an IPv4 to override the default host (`pi.hole`) in order to make
     /// pihole-switch work if it's not set as the device dns server.
-    #[structopt(short = "H", long = "host")]
+    #[structopt(short = "H", long = "host", parse(try_from_str = try_parse_host))]
     pub host: Option<String>,
 
     #[structopt(subcommand)]
