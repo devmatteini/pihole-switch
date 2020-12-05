@@ -1,6 +1,6 @@
 [package]
 name = "pihole-switch"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["devmatteini <dev.matteini@gmail.com>"]
 edition = "2018"
 description = "A command line tool to enable/disable your pihole"
