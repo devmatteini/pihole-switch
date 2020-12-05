@@ -16,6 +16,11 @@ keywords = ["pihole", "cli"]
 name = "phs"
 path = "src/main.rs"
 
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+
 [dependencies]
 serde_json = "1.0.59"
 structopt = "0.3.20"
