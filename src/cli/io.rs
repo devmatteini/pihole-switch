@@ -1,6 +1,6 @@
 use ansi_term::{Color, Style};
 
-use pihole_switch::pihole::PiHoleError;
+use pihole_switch::pihole::error::PiHoleError;
 
 pub fn print_success(value: &str) {
     print_bold(Color::Green, &format!("[✓] {}", value));

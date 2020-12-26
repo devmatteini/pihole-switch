@@ -1,12 +1,13 @@
+use std::time::Duration;
+
 use structopt::StructOpt;
 
 use pihole_switch::pihole;
-use pihole_switch::pihole::PiHoleConfig;
+use pihole_switch::pihole::config::{PiHoleConfig, PIHOLE_DEFAULT_HOST};
 use pihole_switch::resolve_api_token::resolve_api_token;
 
 use crate::cli::io::{print_error, print_pihole_error, print_success};
 use crate::cli::root_command::{Cli, Command};
-use std::time::Duration;
 
 mod cli;
 
@@ -85,7 +86,7 @@ fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>
 }
 
 fn build_pihole_config(token: String, host: Option<String>) -> PiHoleConfig {
-    let host = host.unwrap_or_else(|| pihole::PIHOLE_DEFAULT_HOST.to_string());
+    let host = host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
     let api_url = PiHoleConfig::build_url(&host);
 
     PiHoleConfig::new(token, api_url)

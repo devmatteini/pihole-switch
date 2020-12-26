@@ -1,27 +1,13 @@
-use std::error::Error as StdError;
-use std::fmt;
-use std::fmt::Formatter;
+use std::time::Duration;
 
 use serde_json::Value as JsonValue;
-use std::time::Duration;
 use ureq::Response;
 
-pub const PIHOLE_DEFAULT_HOST: &str = "pi.hole";
+use crate::pihole::config::PiHoleConfig;
+use crate::pihole::error::PiHoleError;
 
-pub struct PiHoleConfig {
-    pub api_token: String,
-    pub api_url: String,
-}
-
-impl PiHoleConfig {
-    pub fn new(api_token: String, api_url: String) -> PiHoleConfig {
-        PiHoleConfig { api_token, api_url }
-    }
-
-    pub fn build_url(host: &str) -> String {
-        format!("http://{}/admin/api.php", host)
-    }
-}
+pub mod config;
+pub mod error;
 
 pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
@@ -87,31 +73,3 @@ fn validate_status(
         Err(error)
     }
 }
-
-#[derive(Debug, PartialEq)]
-pub enum PiHoleError {
-    BadRequestOrTokenNotValid,
-    HttpError(String),
-    InvalidResponse,
-    NotEnabled,
-    NotDisabled,
-}
-
-impl fmt::Display for PiHoleError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            PiHoleError::BadRequestOrTokenNotValid => {
-                f.write_str("Bad request or api token not valid")
-            }
-            PiHoleError::HttpError(inner) => f.write_str(&format!(
-                "An error occurred during the request:\n  {}",
-                inner
-            )),
-            PiHoleError::InvalidResponse => f.write_str("Pihole returned an invalid response"),
-            PiHoleError::NotEnabled => f.write_str("Cannot enable pihole"),
-            PiHoleError::NotDisabled => f.write_str("Cannot disable pihole"),
-        }
-    }
-}
-
-impl StdError for PiHoleError {}

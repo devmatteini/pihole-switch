@@ -2,12 +2,14 @@ mod support;
 
 #[cfg(test)]
 mod pihole_tests {
+    use std::time::Duration;
+
     use pihole_switch::pihole;
-    use pihole_switch::pihole::{PiHoleConfig, PiHoleError};
+    use pihole_switch::pihole::config::PiHoleConfig;
+    use pihole_switch::pihole::error::PiHoleError;
     use support::pihole_server::PiHoleServer;
 
     use super::*;
-    use std::time::Duration;
 
     #[test]
     fn successfully_enabled() {
