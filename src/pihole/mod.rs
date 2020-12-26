@@ -1,5 +1,4 @@
 use serde_json::Value as JsonValue;
-use ureq::Response;
 
 use crate::pihole::config::PiHoleConfig;
 use crate::pihole::disable_time::PiHoleDisableTime;
@@ -30,9 +29,7 @@ pub fn enable(config: &PiHoleConfig) -> PiholeResult {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
     let response = request::get(&url)?;
 
-    let json = request::deserialize_response_json(response)?;
-
-    process_response(json, ExpectedStatus::Enabled, PiHoleError::NotEnabled)
+    process_response(response, ExpectedStatus::Enabled, PiHoleError::NotEnabled)
 }
 
 pub fn disable(config: &PiHoleConfig, time: PiHoleDisableTime) -> PiholeResult {
@@ -44,9 +41,7 @@ pub fn disable(config: &PiHoleConfig, time: PiHoleDisableTime) -> PiholeResult {
     );
     let response = request::get(&url)?;
 
-    let json = request::deserialize_response_json(response)?;
-
-    process_response(json, ExpectedStatus::Disabled, PiHoleError::NotDisabled)
+    process_response(response, ExpectedStatus::Disabled, PiHoleError::NotDisabled)
 }
 
 fn process_response(
