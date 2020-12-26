@@ -9,13 +9,27 @@ use crate::pihole::error::PiHoleError;
 pub mod config;
 pub mod error;
 
+enum ExpectedStatus {
+    Enabled,
+    Disabled,
+}
+
+impl ExpectedStatus {
+    pub fn as_str(&self) -> &str {
+        match self {
+            ExpectedStatus::Enabled => "enabled",
+            ExpectedStatus::Disabled => "disabled",
+        }
+    }
+}
+
 pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
     let response = request(&url)?;
 
     let json = deserialize_response_json(response)?;
 
-    process_response(json, "enabled", PiHoleError::NotEnabled)
+    process_response(json, ExpectedStatus::Enabled, PiHoleError::NotEnabled)
 }
 
 pub fn disable(config: &PiHoleConfig, time: Option<Duration>) -> Result<(), PiHoleError> {
@@ -28,7 +42,7 @@ pub fn disable(config: &PiHoleConfig, time: Option<Duration>) -> Result<(), PiHo
 
     let json = deserialize_response_json(response)?;
 
-    process_response(json, "disabled", PiHoleError::NotDisabled)
+    process_response(json, ExpectedStatus::Disabled, PiHoleError::NotDisabled)
 }
 
 fn request(url: &str) -> Result<Response, PiHoleError> {
@@ -49,7 +63,7 @@ fn deserialize_response_json(response: Response) -> Result<JsonValue, PiHoleErro
 
 fn process_response(
     json: JsonValue,
-    expected_status: &str,
+    expected_status: ExpectedStatus,
     status_error: PiHoleError,
 ) -> Result<(), PiHoleError> {
     match json {
@@ -63,11 +77,11 @@ fn process_response(
 }
 
 fn validate_status(
-    expected: &str,
+    expected: ExpectedStatus,
     actual: &JsonValue,
     error: PiHoleError,
 ) -> Result<(), PiHoleError> {
-    if actual == &JsonValue::from(expected) {
+    if actual == &JsonValue::from(expected.as_str()) {
         Ok(())
     } else {
         Err(error)
