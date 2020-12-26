@@ -1,12 +1,12 @@
-use std::time::Duration;
-
 use serde_json::Value as JsonValue;
 use ureq::Response;
 
 use crate::pihole::config::PiHoleConfig;
+use crate::pihole::disable_time::PiHoleDisableTime;
 use crate::pihole::error::PiHoleError;
 
 pub mod config;
+pub mod disable_time;
 pub mod error;
 
 enum ExpectedStatus {
@@ -32,11 +32,12 @@ pub fn enable(config: &PiHoleConfig) -> Result<(), PiHoleError> {
     process_response(json, ExpectedStatus::Enabled, PiHoleError::NotEnabled)
 }
 
-pub fn disable(config: &PiHoleConfig, time: Option<Duration>) -> Result<(), PiHoleError> {
-    let disable_time = time.unwrap_or_else(|| Duration::from_secs(0)).as_secs();
+pub fn disable(config: &PiHoleConfig, time: PiHoleDisableTime) -> Result<(), PiHoleError> {
     let url = format!(
         "{}?disable={}&auth={}",
-        &config.api_url, disable_time, &config.api_token
+        &config.api_url,
+        time.as_secs(),
+        &config.api_token
     );
     let response = request(&url)?;
 

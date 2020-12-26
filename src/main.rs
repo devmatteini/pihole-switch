@@ -1,9 +1,8 @@
-use std::time::Duration;
-
 use structopt::StructOpt;
 
 use pihole_switch::pihole;
 use pihole_switch::pihole::config::{PiHoleConfig, PIHOLE_DEFAULT_HOST};
+use pihole_switch::pihole::disable_time::PiHoleDisableTime;
 use pihole_switch::resolve_api_token::resolve_api_token;
 
 use crate::cli::io::{print_error, print_pihole_error, print_success};
@@ -61,7 +60,7 @@ fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
-            let disable_time = time.map(Duration::from_secs);
+            let disable_time = PiHoleDisableTime::from_secs(time);
             let res = pihole::disable(&config, disable_time);
 
             match res {

@@ -6,6 +6,7 @@ mod pihole_tests {
 
     use pihole_switch::pihole;
     use pihole_switch::pihole::config::PiHoleConfig;
+    use pihole_switch::pihole::disable_time::PiHoleDisableTime;
     use pihole_switch::pihole::error::PiHoleError;
     use support::pihole_server::PiHoleServer;
 
@@ -83,7 +84,7 @@ mod pihole_tests {
             api_url: url,
         };
 
-        let response = pihole::disable(&config, None);
+        let response = pihole::disable(&config, PiHoleDisableTime::none());
 
         assert_eq!(response, Ok(()))
     }
@@ -97,8 +98,8 @@ mod pihole_tests {
             api_token: "VALID_TOKEN".to_string(),
             api_url: url,
         };
+        let two_secs = PiHoleDisableTime::from_duration(Duration::from_secs(2));
 
-        let two_secs = Some(Duration::from_secs(2));
         let response = pihole::disable(&config, two_secs);
 
         assert_eq!(response, Ok(()))
@@ -114,7 +115,7 @@ mod pihole_tests {
             api_url: url,
         };
 
-        let response = pihole::disable(&config, None);
+        let response = pihole::disable(&config, PiHoleDisableTime::none());
 
         assert_eq!(response, Err(PiHoleError::BadRequestOrTokenNotValid))
     }
@@ -129,7 +130,7 @@ mod pihole_tests {
             api_url: url,
         };
 
-        let response = pihole::disable(&config, None);
+        let response = pihole::disable(&config, PiHoleDisableTime::none());
 
         assert_eq!(response, Err(PiHoleError::BadRequestOrTokenNotValid))
     }
