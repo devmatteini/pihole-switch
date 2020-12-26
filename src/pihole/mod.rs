@@ -8,6 +8,7 @@ use crate::pihole::error::PiHoleError;
 pub mod config;
 pub mod disable_time;
 pub mod error;
+mod request;
 
 enum ExpectedStatus {
     Enabled,
@@ -27,9 +28,9 @@ type PiholeResult = Result<(), PiHoleError>;
 
 pub fn enable(config: &PiHoleConfig) -> PiholeResult {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
-    let response = request(&url)?;
+    let response = request::get(&url)?;
 
-    let json = deserialize_response_json(response)?;
+    let json = request::deserialize_response_json(response)?;
 
     process_response(json, ExpectedStatus::Enabled, PiHoleError::NotEnabled)
 }
@@ -41,27 +42,11 @@ pub fn disable(config: &PiHoleConfig, time: PiHoleDisableTime) -> PiholeResult {
         time.as_secs(),
         &config.api_token
     );
-    let response = request(&url)?;
+    let response = request::get(&url)?;
 
-    let json = deserialize_response_json(response)?;
+    let json = request::deserialize_response_json(response)?;
 
     process_response(json, ExpectedStatus::Disabled, PiHoleError::NotDisabled)
-}
-
-fn request(url: &str) -> Result<Response, PiHoleError> {
-    let response = ureq::get(url).timeout_connect(7_000).call();
-
-    if let Some(err) = response.synthetic_error() {
-        return Err(PiHoleError::HttpError(err.body_text()));
-    }
-
-    Ok(response)
-}
-
-fn deserialize_response_json(response: Response) -> Result<JsonValue, PiHoleError> {
-    response
-        .into_json()
-        .map_err(|_| PiHoleError::InvalidResponse)
 }
 
 fn process_response(
