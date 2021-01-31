@@ -36,10 +36,13 @@ fn handle_enable(token: Option<String>, host: Option<String>) -> ExitCode {
             let res = pihole::enable(&config);
 
             match res {
-                Ok(_) => print_success("PiHole enabled successfully!"),
+                Ok(_) => {
+                    print_success("PiHole enabled successfully!");
+                    ExitCode::Ok
+                }
                 Err(err) => {
                     print_pihole_error(err);
-                    return ExitCode::Error;
+                    ExitCode::Error
                 }
             }
         }
@@ -49,11 +52,9 @@ fn handle_enable(token: Option<String>, host: Option<String>) -> ExitCode {
                 err
             ));
 
-            return ExitCode::Error;
+            ExitCode::Error
         }
     }
-
-    ExitCode::Ok
 }
 
 fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>) -> ExitCode {
@@ -64,10 +65,13 @@ fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>
             let res = pihole::disable(&config, disable_time);
 
             match res {
-                Ok(_) => print_success("PiHole disabled successfully!"),
+                Ok(_) => {
+                    print_success("PiHole disabled successfully!");
+                    ExitCode::Ok
+                }
                 Err(err) => {
                     print_pihole_error(err);
-                    return ExitCode::Error;
+                    ExitCode::Error
                 }
             }
         }
@@ -77,11 +81,9 @@ fn handle_disable(token: Option<String>, host: Option<String>, time: Option<u64>
                 err
             ));
 
-            return ExitCode::Error;
+            ExitCode::Error
         }
     }
-
-    ExitCode::Ok
 }
 
 fn build_pihole_config(token: String, host: Option<String>) -> PiHoleConfig {
