@@ -23,7 +23,7 @@ impl ExpectedStatus {
     }
 }
 
-type PiholeResult = Result<(), PiHoleError>;
+pub type PiholeResult = Result<(), PiHoleError>;
 
 pub fn enable(config: &PiHoleConfig) -> PiholeResult {
     let url = format!("{}?enable&auth={}", &config.api_url, &config.api_token);
