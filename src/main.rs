@@ -51,10 +51,7 @@ fn handle_command(
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
-
-            let res = cmd_func(&config);
-
-            match res {
+            match cmd_func(&config) {
                 Ok(_) => {
                     print_success(&format!("PiHole {}d successfully!", cmd_name));
                     ExitCode::Ok
