@@ -22,24 +22,32 @@ fn main() {
     let host = args.host;
 
     let exit_code = match args.cmd {
-        Command::Enable { token } => handle_command(
-            token,
-            host,
-            |conf: &PiHoleConfig| pihole::enable(conf),
-            &"enable",
-        ),
-        Command::Disable { token, time } => handle_command(
-            token,
-            host,
-            |conf: &PiHoleConfig| {
-                let disable_time = PiHoleDisableTime::from_secs(time);
-                pihole::disable(conf, disable_time)
-            },
-            &"disable",
-        ),
+        Command::Enable { token } => handle_enable(host, token),
+        Command::Disable { token, time } => handle_disable(host, token, time),
     };
 
     std::process::exit(exit_code as i32);
+}
+
+fn handle_enable(host: Option<String>, token: Option<String>) -> ExitCode {
+    handle_command(
+        token,
+        host,
+        |conf: &PiHoleConfig| pihole::enable(conf),
+        &"enable",
+    )
+}
+
+fn handle_disable(host: Option<String>, token: Option<String>, time: Option<u64>) -> ExitCode {
+    handle_command(
+        token,
+        host,
+        |conf: &PiHoleConfig| {
+            let disable_time = PiHoleDisableTime::from_secs(time);
+            pihole::disable(conf, disable_time)
+        },
+        &"disable",
+    )
 }
 
 fn handle_command<F>(
