@@ -65,7 +65,7 @@ fn handle_command(
         Err(err) => {
             print_error(&format!(
                 "{}\nUse `phs {} [token]` or set PIHOLE_TOKEN environment variable",
-                cmd_name, err
+                err, cmd_name
             ));
 
             ExitCode::Error
