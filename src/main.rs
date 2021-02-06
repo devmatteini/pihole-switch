@@ -25,13 +25,13 @@ fn main() {
         Command::Enable { token } => handle_command(
             token,
             host,
-            &|conf: &PiHoleConfig| pihole::enable(conf),
+            |conf: &PiHoleConfig| pihole::enable(conf),
             &"enable",
         ),
         Command::Disable { token, time } => handle_command(
             token,
             host,
-            &|conf: &PiHoleConfig| {
+            |conf: &PiHoleConfig| {
                 let disable_time = PiHoleDisableTime::from_secs(time);
                 pihole::disable(conf, disable_time)
             },
@@ -42,12 +42,15 @@ fn main() {
     std::process::exit(exit_code as i32);
 }
 
-fn handle_command(
+fn handle_command<F>(
     token: Option<String>,
     host: Option<String>,
-    cmd_func: &dyn Fn(&PiHoleConfig) -> PiholeResult,
+    cmd_func: F,
     cmd_name: &str,
-) -> ExitCode {
+) -> ExitCode
+where
+    F: FnOnce(&PiHoleConfig) -> PiholeResult,
+{
     match resolve_api_token(token) {
         Ok(token) => {
             let config = build_pihole_config(token, host);
