@@ -16,16 +16,19 @@ enum ExitCode {
     Error = 1,
 }
 
-fn main() {
+fn run_app() -> ExitCode {
     let args: Cli = Cli::from_args();
 
     let host = args.host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
 
-    let exit_code = match args.cmd {
+    match args.cmd {
         Command::Enable { token } => handle_enable(host, token),
         Command::Disable { token, time } => handle_disable(host, token, time),
-    };
+    }
+}
 
+fn main() {
+    let exit_code = run_app();
     std::process::exit(exit_code as i32);
 }
 
