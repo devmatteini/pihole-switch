@@ -73,14 +73,13 @@ $ phs --host 192.168.1.50 disable
 
 (where `192.168.1.50` is the pihole ip address)
 
-Enable/disable by passing the api token as an argument, instead of using the `PIHOLE_TOKEN` environment variable
+Enable/disable by passing the api token as an option, instead of using the `PIHOLE_TOKEN` environment variable
 
 ```bash
-$ phs enable <api_token>
+$ phs --token <token> <SUBCOMMAND>
 ```
 
-_**Note: the `PIHOLE_TOKEN` environment variable will always have priority even if you pass the api token as an
-argument**_
+_**Note: the api token passed as an option will always have priority on the `PIHOLE_TOKEN` environment variable**_
 
 ## License
 
