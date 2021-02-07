@@ -20,7 +20,18 @@ fn run_app() -> ExitCode {
     let args: Cli = Cli::from_args();
 
     let host = args.host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
-    let token = args.token;
+
+    let token = match resolve_api_token(args.token) {
+        Ok(value) => value,
+        Err(err) => {
+            print_error(&format!(
+                "{}\n{}",
+                err,
+                "Use `phs --token <token> <SUBCOMMAND>` or set `PIHOLE_TOKEN` environment variable"
+            ));
+            return ExitCode::Error;
+        }
+    };
 
     match args.cmd {
         Command::Enable => handle_enable(host, token),
@@ -35,24 +46,20 @@ fn main() {
 
 struct CommandMessages {
     pub ok: String,
-    pub api_token_error: String,
 }
 
-fn handle_enable(host: String, token: Option<String>) -> ExitCode {
+fn handle_enable(host: String, token: String) -> ExitCode {
     handle_command(
         token,
         host,
         |conf: &PiHoleConfig| pihole::enable(conf),
         CommandMessages {
             ok: "PiHole enabled successfully!".to_string(),
-            api_token_error:
-                "Use `phs --token <token> enable` or set PIHOLE_TOKEN environment variable"
-                    .to_string(),
         },
     )
 }
 
-fn handle_disable(host: String, token: Option<String>, time: Option<u64>) -> ExitCode {
+fn handle_disable(host: String, token: String, time: Option<u64>) -> ExitCode {
     handle_command(
         token,
         host,
@@ -62,15 +69,12 @@ fn handle_disable(host: String, token: Option<String>, time: Option<u64>) -> Exi
         },
         CommandMessages {
             ok: "PiHole disabled successfully!".to_string(),
-            api_token_error:
-                "Use `phs --token <token> disable` or set PIHOLE_TOKEN environment variable"
-                    .to_string(),
         },
     )
 }
 
 fn handle_command<F>(
-    token: Option<String>,
+    token: String,
     host: String,
     cmd_func: F,
     messages: CommandMessages,
@@ -78,22 +82,14 @@ fn handle_command<F>(
 where
     F: FnOnce(&PiHoleConfig) -> PiholeResult,
 {
-    match resolve_api_token(token) {
-        Ok(token) => {
-            let config = build_pihole_config(token, &host);
-            match cmd_func(&config) {
-                Ok(_) => {
-                    print_success(&messages.ok);
-                    ExitCode::Ok
-                }
-                Err(err) => {
-                    print_pihole_error(err);
-                    ExitCode::Error
-                }
-            }
+    let config = build_pihole_config(token, &host);
+    match cmd_func(&config) {
+        Ok(_) => {
+            print_success(&messages.ok);
+            ExitCode::Ok
         }
         Err(err) => {
-            print_error(&format!("{}\n{}", err, &messages.api_token_error));
+            print_pihole_error(err);
             ExitCode::Error
         }
     }
