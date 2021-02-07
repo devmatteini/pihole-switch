@@ -20,10 +20,11 @@ fn run_app() -> ExitCode {
     let args: Cli = Cli::from_args();
 
     let host = args.host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
+    let token = args.token;
 
     match args.cmd {
-        Command::Enable { token } => handle_enable(host, token),
-        Command::Disable { token, time } => handle_disable(host, token, time),
+        Command::Enable => handle_enable(host, token),
+        Command::Disable { time } => handle_disable(host, token, time),
     }
 }
 
@@ -44,8 +45,9 @@ fn handle_enable(host: String, token: Option<String>) -> ExitCode {
         |conf: &PiHoleConfig| pihole::enable(conf),
         CommandMessages {
             ok: "PiHole enabled successfully!".to_string(),
-            api_token_error: "Use `phs enable [token]` or set PIHOLE_TOKEN environment variable"
-                .to_string(),
+            api_token_error:
+                "Use `phs --token <token> enable` or set PIHOLE_TOKEN environment variable"
+                    .to_string(),
         },
     )
 }
@@ -60,8 +62,9 @@ fn handle_disable(host: String, token: Option<String>, time: Option<u64>) -> Exi
         },
         CommandMessages {
             ok: "PiHole disabled successfully!".to_string(),
-            api_token_error: "Use `phs disable [token]` or set PIHOLE_TOKEN environment variable"
-                .to_string(),
+            api_token_error:
+                "Use `phs --token <token> disable` or set PIHOLE_TOKEN environment variable"
+                    .to_string(),
         },
     )
 }
