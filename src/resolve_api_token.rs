@@ -5,13 +5,11 @@ use std::fmt::Formatter;
 pub const PIHOLE_TOKEN_ENV: &str = "PIHOLE_TOKEN";
 
 pub fn resolve_api_token(api_token: Option<String>) -> Result<String, TokenResolverError> {
-    let env = std::env::var(PIHOLE_TOKEN_ENV);
-
-    match env {
-        Ok(value) => Ok(value),
-        Err(_) => match api_token {
-            Some(value) => Ok(value),
-            None => Err(TokenResolverError::NoToken),
+    match api_token {
+        Some(value) => Ok(value),
+        None => match std::env::var(PIHOLE_TOKEN_ENV) {
+            Ok(value) => Ok(value),
+            Err(_) => Err(TokenResolverError::NoToken),
         },
     }
 }
@@ -41,7 +39,18 @@ mod tests {
 
     #[test]
     #[serial]
-    fn with_env_var() {
+    fn only_parameter() {
+        set_api_token_env(None);
+        let api_token = Some(String::from("ANY_VALUE"));
+
+        let actual = resolve_api_token(api_token);
+
+        assert_eq!(actual.ok(), Some(String::from("ANY_VALUE")));
+    }
+
+    #[test]
+    #[serial]
+    fn only_env_variable() {
         set_api_token_env(Some("ANY_VALUE"));
 
         let actual = resolve_api_token(None);
@@ -51,24 +60,13 @@ mod tests {
 
     #[test]
     #[serial]
-    fn with_env_var_and_parameter() {
+    fn parameter_has_priority_on_env_var() {
         set_api_token_env(Some("ANY_VALUE"));
         let api_token = Some(String::from("ANY_VALUE_AS_PARAM"));
 
         let actual = resolve_api_token(api_token);
 
-        assert_eq!(actual.ok(), Some(String::from("ANY_VALUE")));
-    }
-
-    #[test]
-    #[serial]
-    fn without_env_var() {
-        set_api_token_env(None);
-        let api_token = Some(String::from("ANY_VALUE"));
-
-        let actual = resolve_api_token(api_token);
-
-        assert_eq!(actual.ok(), Some(String::from("ANY_VALUE")));
+        assert_eq!(actual.ok(), Some(String::from("ANY_VALUE_AS_PARAM")));
     }
 
     #[test]
