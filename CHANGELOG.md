@@ -2,8 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
-to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [v1.1.0] - 2021-07-02
+
+This release improves `pihole-switch` by polishing existing features.
+
+### Added
+
+- Automatic installation script from latest github release
+
+### Changed
+
+- Pihole api token must be specified using a global option `phs --token <token> <SUBCOMMAND>` instead of argument in
+  enable/disable commands
+- Improved CLI command handling ([#3](https://github.com/devmatteini/pihole-switch/pull/3))
+- Restructured project folders
 
 ## [v1.0.0] - 2020-05-12
 
