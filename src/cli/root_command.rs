@@ -24,6 +24,15 @@ pub struct Cli {
     #[structopt(short = "H", long = "host", parse(try_from_str = try_parse_host))]
     pub host: Option<String>,
 
+    /// PiHole's api token
+    ///
+    /// You can either use this option or set an environment variable `PIHOLE_TOKEN`.
+    ///
+    /// You can find the PiHole api token at http://pi.hole/admin/settings.php?tab=api,
+    /// then under the section `Query log`, click on the button `Show API token` and confirm.
+    #[structopt(short = "T", long = "token")]
+    pub token: Option<String>,
+
     #[structopt(subcommand)]
     pub cmd: Command,
 }
