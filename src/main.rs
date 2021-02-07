@@ -29,12 +29,21 @@ fn main() {
     std::process::exit(exit_code as i32);
 }
 
+struct CommandMessages {
+    pub ok: String,
+    pub api_token_error: String,
+}
+
 fn handle_enable(host: Option<String>, token: Option<String>) -> ExitCode {
     handle_command(
         token,
         host,
         |conf: &PiHoleConfig| pihole::enable(conf),
-        &"enable",
+        CommandMessages {
+            ok: "PiHole enabled successfully!".to_string(),
+            api_token_error: "Use `phs enable [token]` or set PIHOLE_TOKEN environment variable"
+                .to_string(),
+        },
     )
 }
 
@@ -46,7 +55,11 @@ fn handle_disable(host: Option<String>, token: Option<String>, time: Option<u64>
             let disable_time = PiHoleDisableTime::from_secs(time);
             pihole::disable(conf, disable_time)
         },
-        &"disable",
+        CommandMessages {
+            ok: "PiHole disabled successfully!".to_string(),
+            api_token_error: "Use `phs disable [token]` or set PIHOLE_TOKEN environment variable"
+                .to_string(),
+        },
     )
 }
 
@@ -54,7 +67,7 @@ fn handle_command<F>(
     token: Option<String>,
     host: Option<String>,
     cmd_func: F,
-    cmd_name: &str,
+    messages: CommandMessages,
 ) -> ExitCode
 where
     F: FnOnce(&PiHoleConfig) -> PiholeResult,
@@ -64,7 +77,7 @@ where
             let config = build_pihole_config(token, host);
             match cmd_func(&config) {
                 Ok(_) => {
-                    print_success(&format!("PiHole {}d successfully!", cmd_name));
+                    print_success(&messages.ok);
                     ExitCode::Ok
                 }
                 Err(err) => {
@@ -74,11 +87,7 @@ where
             }
         }
         Err(err) => {
-            print_error(&format!(
-                "{}\nUse `phs {} [token]` or set PIHOLE_TOKEN environment variable",
-                err, cmd_name
-            ));
-
+            print_error(&format!("{}\n{}", err, &messages.api_token_error));
             ExitCode::Error
         }
     }
