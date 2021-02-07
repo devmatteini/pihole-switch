@@ -19,7 +19,7 @@ enum ExitCode {
 fn main() {
     let args: Cli = Cli::from_args();
 
-    let host = args.host;
+    let host = args.host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
 
     let exit_code = match args.cmd {
         Command::Enable { token } => handle_enable(host, token),
@@ -34,7 +34,7 @@ struct CommandMessages {
     pub api_token_error: String,
 }
 
-fn handle_enable(host: Option<String>, token: Option<String>) -> ExitCode {
+fn handle_enable(host: String, token: Option<String>) -> ExitCode {
     handle_command(
         token,
         host,
@@ -47,7 +47,7 @@ fn handle_enable(host: Option<String>, token: Option<String>) -> ExitCode {
     )
 }
 
-fn handle_disable(host: Option<String>, token: Option<String>, time: Option<u64>) -> ExitCode {
+fn handle_disable(host: String, token: Option<String>, time: Option<u64>) -> ExitCode {
     handle_command(
         token,
         host,
@@ -65,7 +65,7 @@ fn handle_disable(host: Option<String>, token: Option<String>, time: Option<u64>
 
 fn handle_command<F>(
     token: Option<String>,
-    host: Option<String>,
+    host: String,
     cmd_func: F,
     messages: CommandMessages,
 ) -> ExitCode
@@ -74,7 +74,7 @@ where
 {
     match resolve_api_token(token) {
         Ok(token) => {
-            let config = build_pihole_config(token, host);
+            let config = build_pihole_config(token, &host);
             match cmd_func(&config) {
                 Ok(_) => {
                     print_success(&messages.ok);
@@ -93,9 +93,7 @@ where
     }
 }
 
-fn build_pihole_config(token: String, host: Option<String>) -> PiHoleConfig {
-    let host = host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
-    let api_url = PiHoleConfig::build_url(&host);
-
+fn build_pihole_config(token: String, host: &str) -> PiHoleConfig {
+    let api_url = PiHoleConfig::build_url(host);
     PiHoleConfig::new(token, api_url)
 }
