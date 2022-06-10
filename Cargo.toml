@@ -22,7 +22,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-serde_json = "1.0.59"
+serde_json = "1.0.81"
 structopt = "0.3.20"
 ansi_term = "0.12.1"
 
@@ -33,7 +33,7 @@ features = ["json"]
 
 [dev-dependencies]
 serial_test = "0.5.0"
-serde_json = "1.0.59"
+serde_json = "1.0.81"
 url = "2.1.1"
 assert_cmd = "1.0.1"
 predicates = "1.0.5"
