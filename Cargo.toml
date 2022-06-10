@@ -2,7 +2,7 @@
 name = "pihole-switch"
 version = "1.1.0"
 authors = ["devmatteini <dev.matteini@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "A command line tool to enable/disable your pihole"
 documentation = "https://github.com/devmatteini/pihole-switch"
 readme = "README.md"
