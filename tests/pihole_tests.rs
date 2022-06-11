@@ -1,8 +1,12 @@
+extern crate core;
+
 mod support;
 
 #[cfg(test)]
 mod pihole_tests {
     use std::time::Duration;
+
+    use predicates::Predicate;
 
     use pihole_switch::pihole;
     use pihole_switch::pihole::config::PiHoleConfig;
@@ -66,12 +70,8 @@ mod pihole_tests {
 
         let response = pihole::enable(&config);
 
-        assert_eq!(
-            response.err(),
-            Some(PiHoleError::HttpError(
-                "Connection Failed: Connection refused (os error 111)".to_string()
-            ))
-        );
+        let error = assert_error(response.err());
+        assert_http_error(predicates::str::contains("Connection refused"), error);
     }
 
     #[test]
@@ -133,5 +133,19 @@ mod pihole_tests {
         let response = pihole::disable(&config, PiHoleDisableTime::none());
 
         assert_eq!(response, Err(PiHoleError::BadRequestOrTokenNotValid))
+    }
+
+    fn assert_error(e: Option<PiHoleError>) -> PiHoleError {
+        match e {
+            Some(x) => x,
+            None => panic!("No PiHole error")
+        }
+    }
+
+    fn assert_http_error(predicate: predicates::str::ContainsPredicate, error: PiHoleError) {
+        match error {
+            PiHoleError::HttpError(e) => assert!(predicate.eval(&e)),
+            x => panic!("PiHoleError is not an Http error but {:?}", x)
+        }
     }
 }
