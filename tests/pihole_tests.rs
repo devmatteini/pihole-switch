@@ -71,7 +71,7 @@ mod pihole_tests {
         let response = pihole::enable(&config);
 
         let error = assert_error(response.err());
-        assert_http_error(predicates::str::contains("Connection refused"), error);
+        assert_http_error(predicates::str::contains("Connection Failed"), error);
     }
 
     #[test]
