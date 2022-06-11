@@ -138,14 +138,14 @@ mod pihole_tests {
     fn assert_error(e: Option<PiHoleError>) -> PiHoleError {
         match e {
             Some(x) => x,
-            None => panic!("No PiHole error")
+            None => panic!("No PiHole error"),
         }
     }
 
     fn assert_http_error(predicate: predicates::str::ContainsPredicate, error: PiHoleError) {
         match error {
             PiHoleError::HttpError(e) => assert!(predicate.eval(&e)),
-            x => panic!("PiHoleError is not an Http error but {:?}", x)
+            x => panic!("PiHoleError is not an Http error but {:?}", x),
         }
     }
 }

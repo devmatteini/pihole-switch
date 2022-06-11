@@ -4,7 +4,8 @@ use crate::pihole::error::PiHoleError;
 
 pub fn get(url: &str) -> Result<JsonValue, PiHoleError> {
     ureq::get(url)
-        .timeout(std::time::Duration::from_secs(7)).call()
+        .timeout(std::time::Duration::from_secs(7))
+        .call()
         .map_err(|e| PiHoleError::HttpError(e.to_string()))
         .and_then(deserialize)
 }
