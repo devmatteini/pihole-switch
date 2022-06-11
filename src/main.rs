@@ -1,4 +1,4 @@
-use structopt::StructOpt;
+use clap::Parser;
 
 use pihole_switch::pihole;
 use pihole_switch::pihole::config::{PiHoleConfig, PIHOLE_DEFAULT_HOST};
@@ -17,7 +17,7 @@ enum ExitCode {
 }
 
 fn run_app() -> ExitCode {
-    let args: Cli = Cli::from_args();
+    let args: Cli = Cli::parse();
 
     let host = args.host.unwrap_or_else(|| PIHOLE_DEFAULT_HOST.to_string());
 
