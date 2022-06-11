@@ -19,15 +19,9 @@ jobs:
       - name: Build
         run: cargo build --release
 
-      - name: Run tests
-        run: cargo test
-
       - name: Prepare release asset
         run: |
-          cd ./target/release/
-          strip ./phs
-          zip ../../phs.zip ./phs
-          cd -
+          ./scripts/create-zip.sh
 
       - name: Create github release
         id: create_release
