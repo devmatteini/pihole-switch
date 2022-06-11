@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.1.1] - 2022-06-11
+
+### Development
+
+- Update Rust edition to 2021
+- Migration to `clap` as CLI argument parser instead of `structopt`
+
+### Updated dependencies
+
+- `serde_json` 1.0.59 -> 1.0.81
+- `serial_test` 0.5.0 -> 0.7.0
+- `url` 2.1.1 -> 2.2.2
+- `assert_cmd` 1.0.1 -> 2.0.4
+- `predicates` 1.0.5 -> 2.1.1
+- `ureq` 1.5.1 -> 2.4.0
+
 ## [v1.1.0] - 2021-07-02
 
 This release improves `pihole-switch` by polishing existing features.
