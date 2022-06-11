@@ -52,7 +52,7 @@ fn handle_enable(host: String, token: String) -> ExitCode {
     handle_command(
         token,
         host,
-        |conf: &PiHoleConfig| pihole::enable(conf),
+        pihole::enable,
         CommandMessages {
             ok: "PiHole enabled successfully!".to_string(),
         },
