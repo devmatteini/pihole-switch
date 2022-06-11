@@ -15,7 +15,7 @@ impl PiHoleServer {
 
     pub fn start(&self) -> Result<String, Error> {
         let listener = TcpListener::bind("127.0.0.1:0")?;
-        let url = format!("http://{}", listener.local_addr()?.to_string());
+        let url = format!("http://{}", listener.local_addr()?);
         let api_token = self.api_token.clone();
 
         std::thread::spawn(move || {
