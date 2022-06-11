@@ -39,5 +39,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/create-github-release.sh \
-              "${{ github.ref }}" \
+              "$GITHUB_REF_NAME" \
               "phs.zip"
