@@ -1,6 +1,7 @@
 # Pihole Switch
 
 ![CI](https://github.com/devmatteini/pihole-switch/workflows/CI/badge.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/devmatteini/pihole-switch)
 
 A command line tool to enable/disable your [pihole](https://pi-hole.net/)
 
