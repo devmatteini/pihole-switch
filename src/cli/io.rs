@@ -1,29 +1,34 @@
-use ansi_term::{Color, Style};
+use console::style;
+use console::StyledObject;
 
 use pihole_switch::pihole::error::PiHoleError;
 
 pub fn print_success(value: &str) {
-    print_bold(Color::Green, &format!("[✓] {}", value));
+    let message = format!("[✓] {}", value);
+    print_bold(style(message).green());
 }
 
 pub fn print_error(value: &str) {
-    eprint_bold(Color::Red, &format!("[X] {}", value));
+    let message = format!("[X] {}", value);
+    eprint_bold(style(message).red());
 }
 
 pub fn print_warning(value: &str) {
-    eprint_bold(Color::Yellow, &format!("[!] {}", value));
+    let message = format!("[!] {}", value);
+    eprint_bold(style(message).yellow());
 }
 
 pub fn print_unknown(value: &str) {
-    eprint_bold(Color::White, &format!("[?] {}", value));
+    let message = format!("[?] {}", value);
+    eprint_bold(style(message).white());
 }
 
-fn print_bold(color: Color, message: &str) {
-    println!("{}", Style::new().bold().fg(color).paint(message));
+fn print_bold<T: std::fmt::Display>(message: StyledObject<T>) {
+    println!("{}", message.bold());
 }
 
-fn eprint_bold(color: Color, message: &str) {
-    eprintln!("{}", Style::new().bold().fg(color).paint(message));
+fn eprint_bold<T: std::fmt::Display>(message: StyledObject<T>) {
+    eprintln!("{}", message.bold());
 }
 
 pub fn print_pihole_error(error: PiHoleError) {
