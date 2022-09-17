@@ -25,6 +25,7 @@ codegen-units = 1
 serde_json = "1.0.81"
 clap = { version = "3.1.18", features = ["derive"] }
 ansi_term = "0.12.1"
+console = "0.15.1"
 
 [dependencies.ureq]
 version = "2.4.0"
