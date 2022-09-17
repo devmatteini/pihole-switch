@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fmt;
 use std::fmt::Formatter;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum PiHoleError {
     BadRequestOrTokenNotValid,
     HttpError(String),
