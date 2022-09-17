@@ -4,9 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.1.3] - 2022-09-17
+
+### Security
+
+`ansi_term` is [unmaintained](https://github.com/advisories/GHSA-74w3-p89x-ffgh), so we switched to the [`console`](https://crates.io/crates/console) crate to color text for the terminal.
+
+### Updated dependencies
+
+- `serde_json` 1.0.81 -> 1.0.85
+- `ureq` 2.4.0 -> 2.5.0
+- `clap` 3.1.18 -> 3.2.22
+
 ## [v1.1.2] - 2022-06-18
 
 ### Security
+
 [CVE-2022-24713](https://github.com/advisories/GHSA-m5pq-gvj9-9vr8) - Updated `regex` crate to 1.5.6 ([#4](https://github.com/devmatteini/pihole-switch/pull/4))
 
 ## [v1.1.1] - 2022-06-11
