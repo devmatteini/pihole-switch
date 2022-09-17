@@ -14,7 +14,7 @@ pub fn resolve_api_token(api_token: Option<String>) -> Result<String, TokenResol
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum TokenResolverError {
     NoToken,
 }
