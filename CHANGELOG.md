@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.1.4] - 2023-01-14
+
+This is a maintenance release that updates our dependencies.
+
+### Development
+
+- Rename git default branch `master` -> `main`
+
+### Updated dependencies
+
+- `clap` 3.2.22 -> 4.1.1
+- `console` 0.15.1 -> 0.15.4
+- `serde_json` 1.0.85 -> 1.0.91
+- `ureq` 2.5.0 -> 2.6.1
+- `serial_test` 0.9.0 -> 0.10.0
+- `predicates` 2.1.1 -> 2.1.5
+- `assert_cmd` 2.0.4 -> 2.0.8
+
 ## [v1.1.3] - 2022-09-17
 
 ### Security
