@@ -21,6 +21,6 @@ fn pihole_error(error: ureq::Error) -> PiHoleError {
             let kind = e.kind();
             PiHoleError::HttpError(format!("{} - {}", kind, message))
         }
-        other => PiHoleError::HttpError(other.to_string())
+        other => PiHoleError::HttpError(other.to_string()),
     }
 }
