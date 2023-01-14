@@ -23,7 +23,7 @@ Just open a terminal, and you can disable pihole in a moment and for as long as 
 ### Recommended
 
 ```bash
-$ curl -s https://raw.githubusercontent.com/devmatteini/pihole-switch/master/install.sh | bash
+$ curl -s https://raw.githubusercontent.com/devmatteini/pihole-switch/main/install.sh | bash
 ```
 
 Download the [latest release](https://github.com/devmatteini/pihole-switch/releases/latest)
