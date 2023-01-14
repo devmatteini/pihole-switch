@@ -21,8 +21,8 @@ mod cli_tests {
 
         let assert = cmd
             .env_clear()
-            .args(&["--host", &host])
-            .args(&["--token", "VALID_TOKEN"])
+            .args(["--host", &host])
+            .args(["--token", "VALID_TOKEN"])
             .arg("enable")
             .assert();
 
