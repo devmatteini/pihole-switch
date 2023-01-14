@@ -12,7 +12,7 @@ fn try_parse_host(src: &str) -> Result<String, AddrParseError> {
 }
 
 #[derive(Debug, Parser)]
-#[clap(
+#[command(
     name = "pihole-switch",
     version,
     about = "A command line tool to enable/disable your PiHole"
@@ -22,7 +22,7 @@ pub struct Cli {
     ///
     /// You can pass an IPv4 to override the default host (`pi.hole`) in order to make
     /// pihole-switch work if it's not set as the device dns server.
-    #[clap(short = 'H', long = "host", parse(try_from_str = try_parse_host))]
+    #[arg(short = 'H', long = "host", value_parser = try_parse_host)]
     pub host: Option<String>,
 
     /// PiHole's api token
@@ -31,10 +31,10 @@ pub struct Cli {
     ///
     /// You can find the PiHole api token at http://pi.hole/admin/settings.php?tab=api,
     /// then under the section `Query log`, click on the button `Show API token` and confirm.
-    #[clap(short = 'T', long = "token")]
+    #[arg(short = 'T', long = "token")]
     pub token: Option<String>,
 
-    #[clap(subcommand)]
+    #[command(subcommand)]
     pub cmd: Command,
 }
 
@@ -44,10 +44,10 @@ pub enum Command {
     ///
     /// The api token is required.
     /// Use `phs --token <api_token> enable` or set set an environment variable `PIHOLE_TOKEN`
-    #[clap(alias("e"))]
+    #[command(alias("e"))]
     Enable,
 
-    #[clap(alias("d"))]
+    #[command(alias("d"))]
     /// Disable your PiHole
     ///
     /// The api token is required.
@@ -56,7 +56,7 @@ pub enum Command {
         /// Disable pihole for custom seconds
         ///
         /// Default is indefinitely.
-        #[clap(short = 't', long = "time")]
+        #[arg(short = 't', long = "time")]
         time: Option<u64>,
     },
 }
