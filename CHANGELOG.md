@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v1.1.5] - 2025-03-25
+
+This is a maintenance release that updates our dependencies.
+
+### Updated dependencies
+
+- bump `url` from 2.3.1 to 2.5.4
+- bump `ureq` from 2.6.1 to 3.0.10
+- bump `serde_json` from 0.10.0 to 3.2.0
+- bump `predicates` from 2.1.5 to 3.1.3
+- bump `console` from 0.15.4 to 0.15.11
+- bump `clap` from 4.1.1 to 4.5.32
+- bump `assert_cmd` from 2.0.8 to 2.0.16
+
 ## [v1.1.4] - 2023-01-14
 
 This is a maintenance release that updates our dependencies.
