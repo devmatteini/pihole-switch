@@ -27,7 +27,7 @@ clap = { version = "4.5.32", features = ["derive"] }
 console = "0.15.11"
 
 [dependencies.ureq]
-version = "2.6.1"
+version = "3.0.10"
 default-features = false
 features = ["json"]
 

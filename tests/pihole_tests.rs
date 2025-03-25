@@ -71,7 +71,7 @@ mod pihole_tests {
         let response = pihole::enable(&config);
 
         let error = assert_error(response.err());
-        assert_http_error(predicates::str::contains("Connection Failed"), error);
+        assert_http_error(predicates::str::contains("Connection refused"), error);
     }
 
     #[test]
@@ -144,7 +144,9 @@ mod pihole_tests {
 
     fn assert_http_error(predicate: predicates::str::ContainsPredicate, error: PiHoleError) {
         match error {
-            PiHoleError::HttpError(e) => assert!(predicate.eval(&e)),
+            PiHoleError::HttpError(e) => {
+                assert!(predicate.eval(&e), "Predicate failed with error: '{}'", e)
+            }
             x => panic!("PiHoleError is not an Http error but {:?}", x),
         }
     }
