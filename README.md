@@ -5,7 +5,7 @@
 
 A command line tool to enable/disable your [pihole](https://pi-hole.net/)
 
-![](./assets/phs_demo.gif)
+![Pihole Switch demo](./assets/phs_demo.gif)
 
 Sometimes you just need to disable your pihole for some website to work.
 _**PiholeSwitch** makes this operation much easier_.
@@ -23,21 +23,22 @@ Just open a terminal, and you can disable pihole in a moment and for as long as 
 ### Recommended
 
 ```bash
-$ curl -s https://raw.githubusercontent.com/devmatteini/pihole-switch/main/install.sh | bash
+curl -s https://raw.githubusercontent.com/devmatteini/pihole-switch/main/install.sh | bash
 ```
 
 Download the [latest release](https://github.com/devmatteini/pihole-switch/releases/latest)
 and unzip the `phs.zip` file.
 
-After the archive is unzipped, move the `phs` binary in a folder included in your `$PATH` (it's commonly used `/usr/local/bin`).
+After the archive is unzipped, move the `phs` binary in a folder included in your `$PATH` (it's commonly used
+`/usr/local/bin`).
 
 ### From DRA
 
 Using [`dra`](https://github.com/devmatteini/dra) you can download and install the latest release
 
 ```bash
-$ dra download --install devmatteini/pihole-switch
-$ ./phs --version
+dra download -s phs.zip --install devmatteini/pihole-switch
+./phs --version
 ```
 
 ### From source
@@ -60,25 +61,25 @@ the button `Show API token` and confirm.
 Enable pihole
 
 ```bash
-$ phs enable
+phs enable
 ```
 
 Disable pihole (indefinitely)
 
 ```bash
-$ phs disable
+phs disable
 ```
 
 Disable pihole for 20 seconds
 
 ```bash
-$ phs disable --time 20
+phs disable --time 20
 ```
 
 If your device doesn't have pihole set as dns
 
 ```bash
-$ phs --host 192.168.1.50 disable
+phs --host 192.168.1.50 disable
 ```
 
 (where `192.168.1.50` is the pihole ip address)
@@ -86,7 +87,7 @@ $ phs --host 192.168.1.50 disable
 Enable/disable by passing the api token as an option, instead of using the `PIHOLE_TOKEN` environment variable
 
 ```bash
-$ phs --token <token> <SUBCOMMAND>
+phs --token <token> <SUBCOMMAND>
 ```
 
 _**Note: the api token passed as an option will always have priority on the `PIHOLE_TOKEN` environment variable**_
